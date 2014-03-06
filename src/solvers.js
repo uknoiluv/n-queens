@@ -112,7 +112,7 @@ window.findNQueensSolution = function(n) {
   // };
   var solution = _(_.range(n)).map(function() {
     return _(_.range(n)).map(function() {
-      return 0;
+      return -1;
     });
   });
 
@@ -120,16 +120,16 @@ window.findNQueensSolution = function(n) {
   // put -1 in every value of row col major minor diagonal except 1
 
   var minusOneInput = function(x,y) {
-    var major = x - y;
+    var major = y - x;
     var minor = x + y;
     for(var i = 0; i < n ; i++){
-      solution[x][i] = -1;
-      solution[i][y] = -1;
+      solution[x][i] = 0;
+      solution[i][y] = 0;
       if ((solution[i][major + i] !== undefined)) {
-        solution[i][major + i] = -1;
+        solution[i][major + i] = 0;
       }
       if ((solution[i][minor - i] !== undefined)) {
-        solution[i][minor - i] = -1;
+        solution[i][minor - i] = 0;
       }
     }
     solution[x][y] = 1;
@@ -140,7 +140,7 @@ window.findNQueensSolution = function(n) {
   var findEmptySpace = function(arr){
     _.each(arr, function(item, index){
       _.each(item, function(subItem, subIndex){
-        if(subItem === 0){
+        if(subItem === -1){
           minusOneInput(index, subIndex);
         }
       });
@@ -151,10 +151,7 @@ window.findNQueensSolution = function(n) {
 
 
 
-
-
-
-  var solution = undefined; //fixme
+  findEmptySpace(solution);
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
@@ -163,7 +160,76 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+
+  var time = new Date();
+  time = time.getTime();
+
+  var solutionCount = 0; //fixme
+
+  if ((n === 0)) {
+    return 1;
+  }
+
+  var solution = _(_.range(n)).map(function() {
+    return _(_.range(n)).map(function() {
+      return 0;
+    });
+  });
+
+
+  // put -1 in every value of row col major minor diagonal except 1
+
+  var addQueen = function(x,y) {
+    var major = y - x;
+    var minor = x + y;
+    for(var i = 0; i < n ; i++){
+      solution[x][i]++;
+      solution[i][y]++;
+      if ((solution[i][major + i] !== undefined)) {
+        solution[i][major + i]++;
+      }
+      if ((solution[i][minor - i] !== undefined)) {
+        solution[i][minor - i]++;
+      }
+    }
+    solution[x][y] = 'x';
+  };
+
+  var removeQueen = function(x,y) {
+    var major = y - x;
+    var minor = x + y;
+    for(var i = 0; i < n ; i++){
+      solution[x][i]--;
+      solution[i][y]--;
+      if ((solution[i][major + i] !== undefined)) {
+        solution[i][major + i]--;
+      }
+      if ((solution[i][minor - i] !== undefined)) {
+        solution[i][minor - i]--;
+      }
+    }
+    solution[x][y] = 0;
+  };
+
+  var recurse = function(rowId) {
+    for (var i = 0; i < n; i++) {
+      if (solution[rowId][i] === 0) {
+        addQueen(rowId, i);
+        if (rowId === n - 1) {
+          solutionCount++;
+        } else {
+          recurse(rowId + 1);
+        }
+        removeQueen(rowId, i);
+      }
+    }
+  };
+
+  recurse(0);
+
+  var time2 = new Date();
+  time2 = time2.getTime();
+  console.log(time2 - time);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
