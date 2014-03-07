@@ -197,18 +197,19 @@ window.countNQueensSolutions = function(n) {
   var columns = 0, majors = 0, minors = 0;
   var recurse = function(rowId) {
     var row = columns | majors | minors;
-    for (var i = 0; i < n; i++) {
-      if (row & (1 << i)) {
-        columns += (1 << i);
-        majors += (1 << i);
-        minors += (1 << i);
+    for(var i = n-1; i >= 0; i--){
+      if(!!(row & (1 << i))){
+        columns = columns | (1 << i);
+        majors = majors | (1 << i);
+        minors = minors | (1 << i);
       }
       if (rowId === n - 1) {
         solutionCount++;
       } else {
         majors = majors >> 1;
         minors = minors << 1;
-        recurse(rowId + 1);
+        rowId++;
+        recurse(rowId);
       }
       // removeQueen(rowId, i);
     }
