@@ -103,7 +103,7 @@ window.findNQueensSolution = function(n) {
         if(subItem === -1){
           minusOneInput(index, subIndex);
         }
-      });
+          });
     });
   };
 
@@ -116,79 +116,107 @@ window.findNQueensSolution = function(n) {
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
 
-  // Log time for solution
-  var time = new Date();
-  time = time.getTime();
+  // // Log time for solution
+  // var time = new Date();
+  // time = time.getTime();
+
+  // var solutionCount = 0; //fixme
+
+  // if ((n === 0)) {
+  //   return 1;
+  // }
+
+  // // Generate board
+  // var solution = _(_.range(n)).map(function() {
+  //   return _(_.range(n)).map(function() {
+  //     return 0;
+  //   });
+  // });
+
+  // // Increment attackable spaces
+  // var addQueen = function(x,y) {
+  //   var major = y - x;
+  //   var minor = x + y;
+  //   for(var i = 0; i < n ; i++){
+  //     solution[x][i]++;
+  //     solution[i][y]++;
+  //     if ((solution[i][major + i] !== undefined)) {
+  //       solution[i][major + i]++;
+  //     }
+  //     if ((solution[i][minor - i] !== undefined)) {
+  //       solution[i][minor - i]++;
+  //     }
+  //   }
+  //   solution[x][y] = 'x';
+  // };
+
+  // // Decrement attackable spaces
+  // var removeQueen = function(x,y) {
+  //   var major = y - x;
+  //   var minor = x + y;
+  //   for(var i = 0; i < n ; i++){
+  //     solution[x][i]--;
+  //     solution[i][y]--;
+  //     if ((solution[i][major + i] !== undefined)) {
+  //       solution[i][major + i]--;
+  //     }
+  //     if ((solution[i][minor - i] !== undefined)) {
+  //       solution[i][minor - i]--;
+  //     }
+  //   }
+  //   solution[x][y] = 0;
+  // };
+
+  // // Recursion through possibility tree
+  // var recurse = function(rowId) {
+  //   for (var i = 0; i < n; i++) {
+  //     if (solution[rowId][i] === 0) {
+  //       addQueen(rowId, i);
+  //       if (rowId === n - 1) {
+  //         solutionCount++;
+  //       } else {
+  //         recurse(rowId + 1);
+  //       }
+  //       removeQueen(rowId, i);
+  //     }
+  //   }
+  // };
+
+  // recurse(0);
+
+  // // Resulting time for solution
+  // var time2 = new Date();
+  // time2 = time2.getTime();
+  // console.log(time2 - time);
+
+  // console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  // return solutionCount;
 
   var solutionCount = 0; //fixme
 
-  if ((n === 0)) {
-    return 1;
-  }
-
-  // Generate board
-  var solution = _(_.range(n)).map(function() {
-    return _(_.range(n)).map(function() {
-      return 0;
-    });
-  });
-
-  // Increment attackable spaces
-  var addQueen = function(x,y) {
-    var major = y - x;
-    var minor = x + y;
-    for(var i = 0; i < n ; i++){
-      solution[x][i]++;
-      solution[i][y]++;
-      if ((solution[i][major + i] !== undefined)) {
-        solution[i][major + i]++;
-      }
-      if ((solution[i][minor - i] !== undefined)) {
-        solution[i][minor - i]++;
-      }
-    }
-    solution[x][y] = 'x';
-  };
-
-  // Decrement attackable spaces
-  var removeQueen = function(x,y) {
-    var major = y - x;
-    var minor = x + y;
-    for(var i = 0; i < n ; i++){
-      solution[x][i]--;
-      solution[i][y]--;
-      if ((solution[i][major + i] !== undefined)) {
-        solution[i][major + i]--;
-      }
-      if ((solution[i][minor - i] !== undefined)) {
-        solution[i][minor - i]--;
-      }
-    }
-    solution[x][y] = 0;
-  };
-
-  // Recursion through possibility tree
+  var columns = 0, majors = 0, minors = 0;
   var recurse = function(rowId) {
+    var row = columns | majors | minors;
     for (var i = 0; i < n; i++) {
-      if (solution[rowId][i] === 0) {
-        addQueen(rowId, i);
-        if (rowId === n - 1) {
-          solutionCount++;
-        } else {
-          recurse(rowId + 1);
-        }
-        removeQueen(rowId, i);
+      if (row & (1 << i)) {
+        columns += (1 << i);
+        majors += (1 << i);
+        minors += (1 << i);
       }
+      if (rowId === n - 1) {
+        solutionCount++;
+      } else {
+        majors = majors >> 1;
+        minors = minors << 1;
+        recurse(rowId + 1);
+      }
+      // removeQueen(rowId, i);
     }
   };
 
   recurse(0);
 
-  // Resulting time for solution
-  var time2 = new Date();
-  time2 = time2.getTime();
-  console.log(time2 - time);
-
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
+
 };
