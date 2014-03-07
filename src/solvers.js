@@ -39,30 +39,16 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  // if (n === 1) return n;
-  // return n * countNRooksSolutions(n - 1);
-  // var solution = _(_.range(n)).map(function() {
-  //   return _(_.range(n)).map(function() {
-  //     return 0;
-  //   });
-  // });
-
-  // var sets2 = [];
-  // for (var i = 0; i < n; i++) {
-  //   for (var j = 0; j < n; j++) {
-  //     if (j !== i) {
-  //       for (var k = 0; k < n; k++) {
-  //         if (k !== j && k !== i) {
-  //           sets2.push([i, j, k]);
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 
   var sets = [];
   var recurseRook = function(n, array) {
     for (var i = 0; i < n; i++) {
+      if (array[0] !== undefined && i === array[0]) {
+        continue;
+      }
+      if (array[1] !== undefined && i === array[1]) {
+        continue;
+      }
       array.push(i);
       if (array.length === n) {
         if ((_.uniq(array)).length === n) {
@@ -76,31 +62,8 @@ window.countNRooksSolutions = function(n) {
     }
   };
 
-  // var orderSrc = _.range(size);
-  // var order;
-
-  // var orderGen = function(){
-  //   if(order.length !== size){
-  //     orderGen();
-  //   }else{
-  //     return result;
-  //   }
-  // };
-
-  // _.each(solution, function(item, index){
-  //   item[index] = 1;
-  // });
-
-  // for(var i = 0; i < order.length; i++){
-  //   var arr = order[i];
-  //   _.each(arr, function(rows, index){
-  //     var result = [];
-  //     result.push(rows[arr[index]]);
-  //   });
-  // }
   recurseRook(n, []);
-  var solutionCount = undefined; //fixme
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+  console.log('Number of solutions for ' + n + ' rooks:', sets.length);
   return sets.length;
 };
 
@@ -108,17 +71,15 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  // var recurse = function(n, ) {
-  // };
+
+  // Generates solution board
   var solution = _(_.range(n)).map(function() {
     return _(_.range(n)).map(function() {
       return -1;
     });
   });
 
-
-  // put -1 in every value of row col major minor diagonal except 1
-
+  //marks dead spots by puttin in 0
   var minusOneInput = function(x,y) {
     var major = y - x;
     var minor = x + y;
@@ -135,8 +96,7 @@ window.findNQueensSolution = function(n) {
     solution[x][y] = 1;
   };
 
-  // put 1 in empty space
-
+  //space for queens
   var findEmptySpace = function(arr){
     _.each(arr, function(item, index){
       _.each(item, function(subItem, subIndex){
@@ -147,12 +107,7 @@ window.findNQueensSolution = function(n) {
     });
   };
 
-
-
-
-
   findEmptySpace(solution);
-
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
 };
@@ -161,6 +116,7 @@ window.findNQueensSolution = function(n) {
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
 
+  // Log time for solution
   var time = new Date();
   time = time.getTime();
 
@@ -170,15 +126,14 @@ window.countNQueensSolutions = function(n) {
     return 1;
   }
 
+  // Generate board
   var solution = _(_.range(n)).map(function() {
     return _(_.range(n)).map(function() {
       return 0;
     });
   });
 
-
-  // put -1 in every value of row col major minor diagonal except 1
-
+  // Increment attackable spaces
   var addQueen = function(x,y) {
     var major = y - x;
     var minor = x + y;
@@ -195,6 +150,7 @@ window.countNQueensSolutions = function(n) {
     solution[x][y] = 'x';
   };
 
+  // Decrement attackable spaces
   var removeQueen = function(x,y) {
     var major = y - x;
     var minor = x + y;
@@ -211,6 +167,7 @@ window.countNQueensSolutions = function(n) {
     solution[x][y] = 0;
   };
 
+  // Recursion through possibility tree
   var recurse = function(rowId) {
     for (var i = 0; i < n; i++) {
       if (solution[rowId][i] === 0) {
@@ -227,6 +184,7 @@ window.countNQueensSolutions = function(n) {
 
   recurse(0);
 
+  // Resulting time for solution
   var time2 = new Date();
   time2 = time2.getTime();
   console.log(time2 - time);
