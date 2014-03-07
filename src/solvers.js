@@ -192,18 +192,26 @@ window.countNQueensSolutions = function(n) {
   // console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   // return solutionCount;
 
+  // Log time for solution
+  // var time = new Date();
+  // time = time.getTime();
+
+  if((n === 0)){
+    return 1;
+  }
+
   var solutionCount = 0; //fixme
 
   var columns = 0, majors = 0, minors = 0;
   var recurse = function(rowId) {
     var row = columns | majors | minors;
     for(var i = n-1; i >= 0; i--){
-      if(!!(row & (1 << i))){
+      if(!(row & (1 << i))){
         columns = columns | (1 << i);
         majors = majors | (1 << i);
         minors = minors | (1 << i);
       }
-      if (rowId === n - 1) {
+      if(rowId === n - 1) {
         solutionCount++;
       } else {
         majors = majors >> 1;
@@ -211,11 +219,14 @@ window.countNQueensSolutions = function(n) {
         rowId++;
         recurse(rowId);
       }
-      // removeQueen(rowId, i);
     }
   };
 
   recurse(0);
+
+  // var time2 = new Date();
+  // time2 = time2.getTime();
+  // console.log(time2 - time);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
